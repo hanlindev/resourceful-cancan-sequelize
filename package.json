@@ -2,7 +2,7 @@
   "name": "resourceful-cancan-sequelize",
   "version": "1.0.0",
   "description": "A cancan extension to be used with Express and Sequelize",
-  "main": "index.js",
+  "main": "lib/resourceful-cancan-sequelize.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,5 +21,12 @@
   "bugs": {
     "url": "https://github.com/hanlindev/resourceful-cancan-sequelize/issues"
   },
-  "homepage": "https://github.com/hanlindev/resourceful-cancan-sequelize#readme"
+  "homepage": "https://github.com/hanlindev/resourceful-cancan-sequelize#readme",
+  "devDependencies": {
+    "typescript": "^1.8.7"
+  },
+  "dependencies": {
+    "cancan": "^2.1.0",
+    "express": "^4.13.4"
+  }
 }

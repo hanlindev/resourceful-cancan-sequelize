@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "noImplicitAny": false,
+        "moduleResolution": "node",
+        "outDir": "lib"
+    },
+    "filesGlob": [
+        "./src/**/*.ts",
+        "./typings/main.d.ts",
+        "./type_definition/cancan.d.ts"
+    ],
+    "compileOnSave": true,
+    "atom": {
+        "rewriteTsconfig": true
+    },
+    "files": [
+        "./src/resourceful-cancan-sequelize.ts",
+        "./type_definition/cancan.d.ts"
+    ]
+}
