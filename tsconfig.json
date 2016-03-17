@@ -17,6 +17,7 @@
     },
     "files": [
         "./src/resourceful-cancan-sequelize.ts",
+        "./typings/main.d.ts",
         "./type_definition/cancan.d.ts"
     ]
 }

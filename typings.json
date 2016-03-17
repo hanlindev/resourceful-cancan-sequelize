@@ -3,6 +3,7 @@
   "version": false,
   "dependencies": {},
   "ambientDependencies": {
-    "express": "registry:dt/express#4.0.0+20160218233549"
+    "express": "registry:dt/express#4.0.0+20160218233549",
+    "sequelize": "registry:dt/sequelize#3.4.1+20160317120654"
   }
 }
