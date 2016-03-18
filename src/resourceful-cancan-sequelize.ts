@@ -2,17 +2,19 @@ import * as express from 'express';
 import * as Sequelize from 'sequelize';
 import * as cancan from 'cancan';
 
-interface IModel {
-    // TODO
-}
-export type ModelsCollection = {[key: string]: IModel};
 export interface AbilitySpecs<TUser> {
     entity: cancan.ConstructorFunction<TUser>;
     config: cancan.ConfigFunction<TUser>;
 }
-export interface CancanConfig<TUser> {
-    models: ModelsCollection;
-    abilities: AbilitySpecs<TUser>[];
+interface CancanHelper<TReturn> {
+  (model: any, action: string, target: any): TReturn;
+}
+
+interface RequestWithAbilities<TModels> extends express.Request {
+  models: TModels,
+  can: CancanHelper<boolean>;
+  cannot: CancanHelper<boolean>;
+  authorize: CancanHelper<void>;
 }
 
 /**
@@ -22,8 +24,24 @@ export interface CancanConfig<TUser> {
  * @param  {CancanConfig} config prperties to configure the abilities.
  * @return {express.RequestHandler}
  */
-export function resourcefulCancan<TUser>(config: CancanConfig<TUser>) {
-    // TODO
+export function resourcefulCancan<TModels, TUser>(
+  models: TModels,
+  abilities: AbilitySpecs<TUser>[]
+): express.RequestHandler {
+  return (
+    req: RequestWithAbilities<TModels>,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    abilities.forEach(ability => {
+      cancan.configure(ability.entity, ability.config);
+    });
+
+    req.models = models;
+    req.can = cancan.can;
+    req.cannot = cancan.cannot;
+    req.authorize = cancan.authorize;
+  }
 }
 
 export interface ResourceLoaderConfig {
@@ -34,9 +52,9 @@ export interface ResourceLoaderConfig {
 
 type ResourceLoader = express.RequestHandler;
 
-export function loadResource(config: ResourceLoaderConfig): ResourceLoader {
+export function loadResource<TModels>(config: ResourceLoaderConfig): ResourceLoader {
     return (
-        req: express.Request,
+        req: RequestWithAbilities<TModels>,
         res: express.Response,
         next: express.NextFunction
     ) => {

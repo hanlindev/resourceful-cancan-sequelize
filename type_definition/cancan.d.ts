@@ -46,13 +46,13 @@ declare namespace __cancan {
      * Return negated result of #can()
      * @return {Boolean}
      */
-    function cannot(): boolean;
+    function cannot(model: any, action: string, target: any): boolean;
 
     /**
      * Same as #can(), but throws an exception
      * if access is not granted
      */
-    function authorize();
+    function authorize(model: any, action: string, target: any);
 
     /**
      * Ability definition
