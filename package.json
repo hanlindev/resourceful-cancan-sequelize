@@ -23,11 +23,17 @@
   },
   "homepage": "https://github.com/hanlindev/resourceful-cancan-sequelize#readme",
   "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "node-mocks-http": "^1.5.2",
+    "sinon": "^1.17.3",
+    "ts-node": "^0.6.2",
     "typescript": "^1.8.7"
   },
   "dependencies": {
     "cancan": "^2.1.0",
     "express": "^4.13.4",
+    "lodash": "^4.6.1",
     "sequelize": "^3.19.3"
   }
 }

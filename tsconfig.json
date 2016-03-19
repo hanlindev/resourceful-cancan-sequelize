@@ -9,7 +9,8 @@
     "filesGlob": [
         "./src/**/*.ts",
         "./typings/main.d.ts",
-        "./type_definition/cancan.d.ts"
+        "./type_definition/cancan.d.ts",
+        "./type_definition/node-mocks-http.d.ts"
     ],
     "compileOnSave": true,
     "atom": {
@@ -17,7 +18,10 @@
     },
     "files": [
         "./src/resourceful-cancan-sequelize.ts",
+        "./src/test/resourceful-cancan-sequelize-spec.ts",
+        "./src/test/utils.ts",
         "./typings/main.d.ts",
-        "./type_definition/cancan.d.ts"
+        "./type_definition/cancan.d.ts",
+        "./type_definition/node-mocks-http.d.ts"
     ]
 }

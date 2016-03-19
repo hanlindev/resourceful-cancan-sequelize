@@ -66,7 +66,7 @@ declare namespace __cancan {
         public can<TModel>(
             actions: string[]|string,
             targets: ConstructorFunction<TModel>[]|ConstructorFunction<TModel>,
-            attrs: (model: TModel) => boolean|any
+            attrs?: (model: TModel) => boolean|any
         );
 
         /**
@@ -79,7 +79,7 @@ declare namespace __cancan {
         public addRule<TModel>(
             actions: string[]|string,
             targets: ConstructorFunction<TModel>[]|ConstructorFunction<TModel>,
-            attrs: (model: TModel) => boolean|any
+            attrs?: (model: TModel) => boolean|any
         );
 
         /**
