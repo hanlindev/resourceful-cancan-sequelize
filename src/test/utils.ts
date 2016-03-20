@@ -28,10 +28,22 @@ export let user2 = new User('test user 2', 'test2@example.com');
 export let book = new Book('test book');
 export let mockDb: IMockDb = {
     User: {
-        findById: sinon.stub().returns(user1),
-        findAll: sinon.stub().returns([user1, user2])
+        findById: sinon.stub().returns({
+            then: (resultFunction) => {
+                resultFunction(user1);
+            }
+        }),
+        findAll: sinon.stub().returns({
+            then: (resultFunction) => {
+                resultFunction([user1, user2]);
+            }
+        })
     },
     Book: {
-        findById: sinon.stub().returns(book)
+        findById: sinon.stub().returns({
+            then: (resultFunction) => {
+                resultFunction(book);
+            }
+        })
     }
 }

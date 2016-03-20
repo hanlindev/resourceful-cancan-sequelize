@@ -61,14 +61,12 @@ export function resourcefulCancan<TDb, TUser>(
 }
 
 export interface ResourceLoaderConfig {
-    name: string;
     idName?: string; // Default name = 'id'
     pageSize?: number; // Default page size = 30
     pageNumberName?: string; // Default page number name = 'page'
 }
 
 export const defaultLoaderConfig: ResourceLoaderConfig = {
-    name: null,
     idName: 'id',
     pageSize: 30,
     pageNumberName: 'page'
@@ -88,17 +86,19 @@ type ResourceLoader = express.RequestHandler;
  * @return {ResourceLoader}              a RequestHandler function.
  */
 export function loadResource(
-    config: ResourceLoaderConfig
+    name: string,
+    config: ResourceLoaderConfig = defaultLoaderConfig
 ): ResourceLoader {
     return (
         req: RequestWithCancan<IDb, IControllerModels>,
         res: express.Response,
         next: express.NextFunction
     ) => {
+        req.models = req.models || {};
         if (req.method === 'POST' || req.method == 'UPDATE') {
-            unmarshalModel(req, res, next, config.name);
+            unmarshalModel(req, res, next, name);
         } else {
-            loadFromDb(req, res, next, config);
+            loadFromDb(name, req, res, next, config);
         }
     }
 }
@@ -129,6 +129,7 @@ function unmarshalModel(
 }
 
 function loadFromDb(
+    name: string,
     req: RequestWithCancan<IDb, IControllerModels>,
     res: express.Response,
     next: express.NextFunction,
@@ -137,11 +138,11 @@ function loadFromDb(
     let idName = config.idName || defaultLoaderConfig.idName;
     let id = req.params[idName] || req.query[idName];
     if (!!id || id == 0) {
-        req.db[config.name].findById(id).then(model => {
+        req.db[name].findById(id).then(model => {
             if (_.isNull(model)) {
                 res.status(404).send(`Model with id ${id} not found`);
             } else {
-                req.models[config.name] = model;
+                req.models[name] = model;
                 next();
             }
         });
@@ -150,11 +151,11 @@ function loadFromDb(
         let pageNumberName = config.pageNumberName ||
             defaultLoaderConfig.pageNumberName;
         let pageNumber = req.params[pageNumberName] || 1;
-        req.db[config.name].findAll({
+        req.db[name].findAll({
             limit: pageSize,
             offset: pageSize * (pageNumber - 1)
         }).then(rows => {
-            req.models[config.name] = rows;
+            req.models[name] = rows;
         });
     }
 }
