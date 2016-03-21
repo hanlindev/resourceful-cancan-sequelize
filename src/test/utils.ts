@@ -1,4 +1,5 @@
 import * as sinon from 'sinon';
+import * as _ from 'lodash';
 
 export class User {
     constructor(
@@ -16,6 +17,7 @@ export class Book {
 export interface IMockModel<TModel> {
     findById?: (id: any) => TModel;
     findAll?: (options: any) => TModel[];
+    build?: (props: any) => TModel;
 }
 
 export interface IMockDb {
@@ -26,24 +28,34 @@ export interface IMockDb {
 export let user1 = new User('test user 1', 'test1@example.com');
 export let user2 = new User('test user 2', 'test2@example.com');
 export let book = new Book('test book');
-export let mockDb: IMockDb = {
+let _mockDb: IMockDb = {
     User: {
-        findById: sinon.stub().returns({
-            then: (resultFunction) => {
-                resultFunction(user1);
-            }
-        }),
+        findById: sinon.stub(),
         findAll: sinon.stub().returns({
             then: (resultFunction) => {
-                resultFunction([user1, user2]);
+                resultFunction([_.clone(user1), _.clone(user2)]);
             }
-        })
+        }),
+        build: sinon.stub().returns(_.clone(user1))
     },
     Book: {
         findById: sinon.stub().returns({
             then: (resultFunction) => {
-                resultFunction(book);
+                resultFunction(_.clone(book));
             }
         })
     }
 }
+
+_mockDb.User.findById['withArgs'](1).returns({
+    then: (resultFunction) => {
+        resultFunction(_.clone(user1));
+    }
+});
+_mockDb.User.findById['withArgs'](2).returns({
+    then: (resultFunction) => {
+        resultFunction(null);
+    }
+})
+
+export let mockDb = _mockDb;

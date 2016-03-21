@@ -2,9 +2,10 @@ import * as express from 'express';
 import * as httpMocks from 'node-mocks-http';
 import {expect} from 'chai';
 import * as cancan from 'cancan';
+import * as _ from 'lodash';
 
 import * as cancan2 from '../resourceful-cancan-sequelize';
-import {User, Book, IMockDb, user1, book, mockDb} from './utils';
+import {User, Book, IMockDb, user1, user2, book, mockDb} from './utils';
 
 describe('resourceful-cancan-sequelize', () => {
     let req: cancan2.RequestWithCancan<IMockDb, cancan2.IControllerModels>;
@@ -74,10 +75,52 @@ describe('resourceful-cancan-sequelize', () => {
             resourceLoader = cancan2.loadResource('User');
         });
 
-        it('set model when id is in param', (done) => {
-            req.params['id'] = 1;
-            resourceLoader(req, res, () => {
-                expect(req.models['User']).to.equal(user1);
+        describe('none POST/UPDATE methods', () => {
+            it('set model when id is in param', (done) => {
+                req.params['id'] = 1;
+                resourceLoader(req, res, () => {
+                    expect(req.models['User']).to.deep.equal(user1);
+                    done();
+                });
+            });
+
+            it('set model when id is in query string', (done) => {
+                req.query['id'] = 1;
+                resourceLoader(req, res, () => {
+                    expect(req.models['User']).to.deep.equal(user1);
+                    done();
+                });
+            });
+
+            it('returns 404 not found if model is not found', (done) => {
+                req.params['id'] = 2;
+                resourceLoader(req, res, next);
+                expect(res.statusCode).to.equal(404);
+                done();
+            });
+
+            it('set model collection when id is not in param', (done) => {
+                resourceLoader(req, res, () => {
+                    expect(req.models['User']).to.deep.equal([user1, user2]);
+                    done();
+                });
+            });
+        });
+
+        describe('POST/UPDATE methods', () => {
+            it('set model from content in the request body', (done) => {
+                req.method = 'POST';
+                req.body['User'] = _.clone<User>(user1, true);
+                resourceLoader(req, res, () => {
+                    expect(req.models['User']).to.deep.equal(user1);
+                    done();
+                });
+            });
+
+            it('returns 400 bad request if model is not in body', (done) => {
+                req.method = 'UPDATE';
+                resourceLoader(req, res, next);
+                expect(res.statusCode).to.equal(400);
                 done();
             });
         });

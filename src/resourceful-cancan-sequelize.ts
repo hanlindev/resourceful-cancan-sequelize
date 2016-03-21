@@ -110,7 +110,7 @@ function unmarshalModel(
     name: string
 ) {
     let model = req.body[name];
-    if (!!model) {
+    if (!model) {
         res.status(400).send('Model data not found in request body.');
         return;
     }
@@ -156,6 +156,7 @@ function loadFromDb(
             offset: pageSize * (pageNumber - 1)
         }).then(rows => {
             req.models[name] = rows;
+            next();
         });
     }
 }
