@@ -18,7 +18,7 @@
     },
     "files": [
         "./src/resourceful-cancan-sequelize.ts",
-        "./src/test/resourceful-cancan-sequelize-spec.ts",
+        "./src/test/load-resource-spec.ts",
         "./src/test/resourceful-cancan-spec.ts",
         "./src/test/utils.ts",
         "./typings/main.d.ts",
