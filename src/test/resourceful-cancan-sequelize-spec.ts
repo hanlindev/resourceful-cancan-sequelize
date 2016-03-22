@@ -1,81 +1,43 @@
 import * as express from 'express';
 import * as httpMocks from 'node-mocks-http';
+import * as sinon from 'sinon';
 import {expect} from 'chai';
 import * as cancan from 'cancan';
 import * as _ from 'lodash';
 
 import * as cancan2 from '../resourceful-cancan-sequelize';
-import {User, Book, IMockDb, user1, user2, book, mockDb} from './utils';
+import {IMockDb, User} from './utils';
+import * as utils from './utils';
+let {
+    user1,
+    user2,
+    book,
+    mockDb,
+    applyResourcefulCancan,
+    applyResourcefulCancanWithRedirects,
+    notFoundUrl,
+    unauthorizedUrl
+} = utils;
 
-describe('resourceful-cancan-sequelize', () => {
+describe('loadResource', () => {
     let req: cancan2.RequestWithCancan<IMockDb, cancan2.IControllerModels>;
     let res: express.Response;
     let next = function() {};
-    let abilitiesMiddleware: express.RequestHandler;
+    let resourceLoader: express.RequestHandler;
 
     beforeEach(() => {
         req = <cancan2.RequestWithCancan<IMockDb, cancan2.IControllerModels>>
             httpMocks.createRequest();
         res = httpMocks.createResponse();
-        abilitiesMiddleware = cancan2.resourcefulCancan(
-            mockDb,
-            [{
-                entity: User,
-                config: function (user: User) {
-                    let abilities = <cancan.Ability<User>> this;
-                    abilities.can('edit', Book);
-                }
-            }]
-        );
-        abilitiesMiddleware(req, res, next);
     });
 
-    describe('resourcefulCancan', () => {
-        it('adds db and cancan helpers to req', () => {
-            expect(req.db).to.not.null;
-            expect(req.can).to.not.null;
-            expect(req.cannot).to.not.null;
-            expect(req.authorize).to.not.null;
-        });
-
-        describe('req.can', () => {
-            it('returns false when action is not authorized', () => {
-                expect(req.can(user1, 'view', book)).to.be.false;
-            })
-            it('returns true when action is authorized', () => {
-                expect(req.can(user1, 'edit', book)).to.be.true;
-            });
-        });
-
-        describe('req.cannot', () => {
-            it('returns true when action is not authorized', () => {
-                expect(req.cannot(user1, 'view', book)).to.be.true;
-            });
-
-            it('returns false when action is authorized', () => {
-                expect(req.cannot(user1, 'edit', book)).to.be.false;
-            });
-        });
-
-        describe('req.authorize', () => {
-            it('throws when action is not authorized', () => {
-                expect(() => {req.authorize(user1, 'view', book)}).to.throw();
-            });
-
-            it('does not throw when action is authorized', () => {
-                expect(() => {req.authorize(user1, 'edit', book)}).to.not.throw();
-            });
-        });
-    });
-
-    describe('loadResource', () => {
-        let resourceLoader: express.RequestHandler;
-
+    describe('without redirect options', () => {
         beforeEach(() => {
+            applyResourcefulCancan(req, res, next);
             resourceLoader = cancan2.loadResource('User');
         });
 
-        describe('none POST/UPDATE methods', () => {
+        describe('non-POST/UPDATE methods', () => {
             it('set model when id is in param', (done) => {
                 req.params['id'] = 1;
                 resourceLoader(req, res, () => {
@@ -122,6 +84,21 @@ describe('resourceful-cancan-sequelize', () => {
                 resourceLoader(req, res, next);
                 expect(res.statusCode).to.equal(400);
                 done();
+            });
+        });
+    });
+
+    describe('with redirects', () => {
+        beforeEach(() => {
+            applyResourcefulCancanWithRedirects(req, res, next);
+        });
+
+        describe('Non-POST/UPDATE methods', () => {
+            it('redirects to not found url if model is not found', () => {
+                let spy = sinon.spy(res, 'redirect');
+                req.params['id'] = 2;
+                resourceLoader(req, res, next);
+                expect(spy.calledWith(notFoundUrl)).to.be.true;
             });
         });
     });

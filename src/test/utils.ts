@@ -1,5 +1,9 @@
+import * as express from 'express';
 import * as sinon from 'sinon';
 import * as _ from 'lodash';
+import * as cancan from 'cancan';
+
+import * as cancan2 from '../resourceful-cancan-sequelize';
 
 export class User {
     constructor(
@@ -59,3 +63,45 @@ _mockDb.User.findById['withArgs'](2).returns({
 })
 
 export let mockDb = _mockDb;
+
+export function applyResourcefulCancan(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+) {
+    let middleware = cancan2.resourcefulCancan(
+        mockDb,
+        [{
+            entity: User,
+            config: function (user: User) {
+                let abilities = <cancan.Ability<User>> this;
+                abilities.can('edit', Book);
+            }
+        }]
+    );
+    middleware(req, res, next);
+}
+
+export let notFoundUrl = 'http://example.com/not-found';
+export let unauthorizedUrl = 'http://example.com/unauthorized';
+export function applyResourcefulCancanWithRedirects(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+) {
+    let middleware = cancan2.resourcefulCancan(
+        mockDb,
+        [{
+            entity: User,
+            config: function (user: User) {
+                let abilities = <cancan.Ability<User>> this;
+                abilities.can('edit', Book);
+            }
+        }],
+        {
+            notFoundRedirect: notFoundUrl,
+            unauthorizedRedirect: unauthorizedUrl
+        }
+    );
+    middleware(req, res, next);
+}

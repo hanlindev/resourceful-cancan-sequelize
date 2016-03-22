@@ -26,10 +26,16 @@ export interface IDb {}
 export interface RequestWithCancan<TDb, TControllerModels>
     extends express.Request {
     db: TDb,
+    cancanConfig: ResourcefulCancanOptions,
     models: TControllerModels,
     can: CancanHelper<boolean>;
     cannot: CancanHelper<boolean>;
     authorize: CancanHelper<void>;
+}
+
+export interface ResourcefulCancanOptions {
+    notFoundRedirect?: string;
+    unauthorizedRedirect?: string;
 }
 
 /**
@@ -42,7 +48,8 @@ export interface RequestWithCancan<TDb, TControllerModels>
 */
 export function resourcefulCancan<TDb, TUser>(
     db: TDb,
-    abilities: AbilitySpecs<TUser>[]
+    abilities: AbilitySpecs<TUser>[],
+    config: ResourcefulCancanOptions = {}
 ): express.RequestHandler {
     return (
         req: RequestWithCancan<TDb, IControllerModels>,
@@ -54,6 +61,7 @@ export function resourcefulCancan<TDb, TUser>(
         });
 
         req.db = db;
+        req.cancanConfig = config;
         req.can = cancan.can;
         req.cannot = cancan.cannot;
         req.authorize = cancan.authorize;
@@ -140,7 +148,11 @@ function loadFromDb(
     if (!!id || id == 0) {
         req.db[name].findById(id).then(model => {
             if (_.isNull(model)) {
-                res.status(404).send(`Model with id ${id} not found`);
+                if (!!req.cancanConfig.notFoundRedirect) {
+                    res.redirect(req.cancanConfig.notFoundRedirect);
+                } else {
+                    res.status(404).send(`Model with id ${id} not found`);
+                }
             } else {
                 req.models[name] = model;
                 next();
@@ -160,20 +172,3 @@ function loadFromDb(
         });
     }
 }
-
-// TODO just reference. Remove when done
-// class User {
-//     constructor(public id: number) {}
-// }
-// class Test {
-//     constructor(public userId: number) {}
-// }
-//
-// cancan.configure(User, function(user: User) {
-//     (<cancan.Ability<User>> this).can('manage', Test, function(test) {
-//         return test.userId === user.id;
-//     });
-// });
-// let user = new User(1);
-// console.log(cancan.can(user, 'add', new Test(1)));
-// console.log(cancan.can(user, 'add', new Test(2)));
