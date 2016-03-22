@@ -7,24 +7,24 @@ declare namespace __cancan {
      */
     function instanceOf(instance: any, model: any): boolean;
 
-    interface ConfigFunction<TUser> {
-        (instance: TUser): void;
+    interface ConfigFunction<TUserModel> {
+        (instance: TUserModel): void;
     }
-    interface ConstructorFunction<TUser> {
-        new (...args: any[]): TUser;
+    interface ConstructorFunction<TModel> {
+        new (...args: any[]): TModel;
     }
-    interface AbilitySpecs<TUser> {
-        entity: ConstructorFunction<TUser>;
-        config: ConfigFunction<TUser>;
+    interface AbilitySpecs<TUserModel> {
+        entity: ConstructorFunction<TUserModel>;
+        config: ConfigFunction<TUserModel>;
     }
     /**
      * Add a new configuration for a class/entity
      * @param  {Function} entity  entity class/function
      * @param  {Function} config  function that defines rules
      */
-    function configure<TUser>(
-        entity: ConstructorFunction<TUser>,
-        config: ConfigFunction<TUser>
+    function configure<TUserModel>(
+        entity: ConstructorFunction<TUserModel>,
+        config: ConfigFunction<TUserModel>
     );
 
     /**
@@ -66,7 +66,7 @@ declare namespace __cancan {
         public can<TModel>(
             actions: string[]|string,
             targets: ConstructorFunction<TModel>[]|ConstructorFunction<TModel>,
-            attrs?: (model: TModel) => boolean|any
+            attrs?: ((model: TModel) => boolean)|any
         );
 
         /**
@@ -79,7 +79,7 @@ declare namespace __cancan {
         public addRule<TModel>(
             actions: string[]|string,
             targets: ConstructorFunction<TModel>[]|ConstructorFunction<TModel>,
-            attrs?: (model: TModel) => boolean|any
+            attrs?: ((model: TModel) => boolean)|any
         );
 
         /**

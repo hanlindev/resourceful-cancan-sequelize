@@ -5,14 +5,14 @@ import * as cancan from 'cancan';
 import * as _ from 'lodash';
 
 import * as cancan2 from '../resourceful-cancan-sequelize';
-import {IMockDb, User} from './utils';
+import {IMockDb} from './utils';
 import * as utils from './utils';
 let {
-    User,
-    Book,
     user1,
     user2,
-    book,
+    book1,
+    book2,
+    book3,
     mockDb,
     applyResourcefulCancan
 } = utils;
@@ -37,31 +37,29 @@ describe('resourcefulCancan', () => {
     });
 
     describe('req.can', () => {
-        it('returns false when action is not authorized', () => {
-            expect(req.can(user1, 'view', book)).to.be.false;
-        })
         it('returns true when action is authorized', () => {
-            expect(req.can(user1, 'edit', book)).to.be.true;
+            expect(req.can(user1, 'edit', book1)).to.be.true;
         });
+        it('returns false when action is not authorized', () => {
+            expect(req.can(user2, 'view', book1)).to.be.false;
+        })
     });
 
     describe('req.cannot', () => {
-        it('returns true when action is not authorized', () => {
-            expect(req.cannot(user1, 'view', book)).to.be.true;
-        });
-
         it('returns false when action is authorized', () => {
-            expect(req.cannot(user1, 'edit', book)).to.be.false;
+            expect(req.cannot(user1, 'edit', book1)).to.be.false;
+        });
+        it('returns true when action is not authorized', () => {
+            expect(req.cannot(user2, 'view', book1)).to.be.true;
         });
     });
 
     describe('req.authorize', () => {
-        it('throws when action is not authorized', () => {
-            expect(() => {req.authorize(user1, 'view', book)}).to.throw();
-        });
-
         it('does not throw when action is authorized', () => {
-            expect(() => {req.authorize(user1, 'edit', book)}).to.not.throw();
+            expect(() => {req.authorize(user1, 'edit', book1)}).to.not.throw();
+        });
+        it('throws when action is not authorized', () => {
+            expect(() => {req.authorize(user2, 'view', book1)}).to.throw();
         });
     });
 });

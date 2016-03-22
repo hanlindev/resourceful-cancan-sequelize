@@ -6,16 +6,11 @@ import * as cancan from 'cancan';
 import * as cancan2 from '../resourceful-cancan-sequelize';
 
 export class User {
-    constructor(
-        public name: string,
-        public email: string
-    ) {}
+    public constructor(public name: string, public email: string) {}
 }
 
 export class Book {
-    constructor(
-        public title: string
-    ) {}
+    public constructor(public id: number, public title: string, public userName: string) {}
 }
 
 export interface IMockModel<TModel> {
@@ -31,7 +26,9 @@ export interface IMockDb {
 
 export let user1 = new User('test user 1', 'test1@example.com');
 export let user2 = new User('test user 2', 'test2@example.com');
-export let book = new Book('test book');
+export let book1 = new Book(1, 'test book 1', 'test user 1');
+export let book2 = new Book(2, 'test book 2', 'test user 1');
+export let book3 = new Book(3, 'test book 3', 'test user 2');
 let _mockDb: IMockDb = {
     User: {
         findById: sinon.stub(),
@@ -40,27 +37,55 @@ let _mockDb: IMockDb = {
                 resultFunction([_.clone(user1), _.clone(user2)]);
             }
         }),
-        build: sinon.stub().returns(_.clone(user1))
     },
     Book: {
         findById: sinon.stub().returns({
             then: (resultFunction) => {
-                resultFunction(_.clone(book));
+                resultFunction(_.clone(book1));
             }
-        })
+        }),
+        findAll: sinon.stub(),
+        build: sinon.stub().returns(_.clone(book1))
     }
 }
 
-_mockDb.User.findById['withArgs'](1).returns({
+_mockDb.Book.findById['withArgs'](1).returns({
     then: (resultFunction) => {
-        resultFunction(_.clone(user1));
+        resultFunction(_.clone(book1));
     }
 });
-_mockDb.User.findById['withArgs'](2).returns({
+_mockDb.Book.findById['withArgs'](3).returns({
+    then: (resultFunction) => {
+        resultFunction(_.clone(book3));
+    }
+});
+_mockDb.Book.findById['withArgs'](4).returns({
     then: (resultFunction) => {
         resultFunction(null);
     }
-})
+});
+_mockDb.Book.findAll['withArgs']({
+    limit: 30,
+    offset: 0,
+    where: {
+        userName: 'test user 1'
+    }
+}).returns({
+    then: (resultFunction) => {
+        resultFunction([_.clone<Book>(book1), _.clone<Book>(book2)]);
+    }
+});
+_mockDb.Book.findAll['withArgs']({
+    limit: 30,
+    offset: 0,
+    where: {
+        userName: 'test user 3'
+    }
+}).returns({
+    then: (resultFunction) => {
+        resultFunction([]);
+    }
+});
 
 export let mockDb = _mockDb;
 
@@ -75,9 +100,13 @@ export function applyResourcefulCancan(
             entity: User,
             config: function (user: User) {
                 let abilities = <cancan.Ability<User>> this;
-                abilities.can('edit', Book);
+                abilities.can('manage', Book, {userName: user.name});
             }
-        }]
+        }],
+        {
+            userPrimaryKey: 'name',
+            userForeignKey: 'userName'
+        }
     );
     middleware(req, res, next);
 }
@@ -95,10 +124,12 @@ export function applyResourcefulCancanWithRedirects(
             entity: User,
             config: function (user: User) {
                 let abilities = <cancan.Ability<User>> this;
-                abilities.can('edit', Book);
+                abilities.can('manage', Book, {userName: user.name});
             }
         }],
         {
+            userPrimaryKey: 'name',
+            userForeignKey: 'userName',
             notFoundRedirect: notFoundUrl,
             unauthorizedRedirect: unauthorizedUrl
         }

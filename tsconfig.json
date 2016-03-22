@@ -18,6 +18,7 @@
     },
     "files": [
         "./src/resourceful-cancan-sequelize.ts",
+        "./src/test/load-and-authorize-resource-spec.ts",
         "./src/test/load-resource-spec.ts",
         "./src/test/resourceful-cancan-spec.ts",
         "./src/test/utils.ts",

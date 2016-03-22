@@ -3,9 +3,9 @@ import * as Sequelize from 'sequelize';
 import * as cancan from 'cancan';
 import * as _ from 'lodash';
 
-export interface AbilitySpecs<TUser> {
-    entity: cancan.ConstructorFunction<TUser>;
-    config: cancan.ConfigFunction<TUser>;
+export interface AbilitySpecs<TUserModel> {
+    entity: cancan.ConstructorFunction<TUserModel>;
+    config: cancan.ConfigFunction<TUserModel>;
 }
 
 export interface CancanHelper<TReturn> {
@@ -34,6 +34,8 @@ export interface RequestWithCancan<TDb, TControllerModels>
 }
 
 export interface ResourcefulCancanOptions {
+    userPrimaryKey?: string; // Default user primary key = 'id'
+    userForeignKey?: string; // Default user foreign key = 'userId'
     notFoundRedirect?: string;
     unauthorizedRedirect?: string;
 }
@@ -102,12 +104,22 @@ export function loadResource(
         res: express.Response,
         next: express.NextFunction
     ) => {
-        req.models = req.models || {};
-        if (req.method === 'POST' || req.method == 'UPDATE') {
-            unmarshalModel(req, res, next, name);
-        } else {
-            loadFromDb(name, req, res, next, config);
-        }
+        loadResourceImpl(name, config, req, res, next);
+    }
+}
+
+function loadResourceImpl(
+    name: string,
+    config: ResourceLoaderConfig,
+    req: RequestWithCancan<IDb, IControllerModels>,
+    res: express.Response,
+    next: express.NextFunction
+) {
+    req.models = req.models || {};
+    if (req.method === 'POST' || req.method == 'PUT') {
+        unmarshalModel(req, res, next, name);
+    } else {
+        loadFromDb(name, req, res, next, config);
     }
 }
 
@@ -150,6 +162,7 @@ function loadFromDb(
             if (_.isNull(model)) {
                 if (!!req.cancanConfig.notFoundRedirect) {
                     res.redirect(req.cancanConfig.notFoundRedirect);
+                    res.end();
                 } else {
                     res.status(404).send(`Model with id ${id} not found`);
                 }
@@ -163,12 +176,65 @@ function loadFromDb(
         let pageNumberName = config.pageNumberName ||
             defaultLoaderConfig.pageNumberName;
         let pageNumber = req.params[pageNumberName] || 1;
+        let userPrimaryKey = req.cancanConfig.userPrimaryKey || 'id';
+        let userForeignKey = req.cancanConfig.userForeignKey || 'userId';
+
         req.db[name].findAll({
             limit: pageSize,
-            offset: pageSize * (pageNumber - 1)
+            offset: pageSize * (pageNumber - 1),
+            where: {
+                [userForeignKey]: req.user[userPrimaryKey]
+            }
         }).then(rows => {
             req.models[name] = rows;
             next();
         });
     }
+}
+
+export function loadAndAuthorizeResource(
+    name: string,
+    config: ResourceLoaderConfig = defaultLoaderConfig
+): express.RequestHandler {
+    return (
+        req: RequestWithCancan<IDb, IControllerModels>,
+        res: express.Response,
+        next: express.NextFunction
+    ) => {
+        loadResourceImpl(name, config, req, res, () => {
+            if (req.can(req.user, getAction(req), req.models[name])) {
+                next();
+            } else {
+                if (!!req.cancanConfig.unauthorizedRedirect) {
+                    res.redirect(req.cancanConfig.unauthorizedRedirect);
+                    res.end();
+                } else {
+                    res.status(401).send('Unauthorized');
+                }
+            }
+        });
+    };
+}
+
+function getAction(req: express.Request): string {
+    let action = '';
+
+    switch(req.method) {
+        case 'GET':
+            action = 'view';
+            break;
+        case 'POST':
+            action = 'add';
+            break;
+        case 'PUT':
+            action = 'edit';
+            break;
+        case 'DESTROY':
+            action = 'destroy';
+            break;
+        default:
+            throw new TypeError('Unknown HTTP method');
+    }
+
+    return action;
 }
