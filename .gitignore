@@ -3,3 +3,4 @@ typings
 lib
 .DS_STORE
 .npm-debug.log
+npm-debug.log

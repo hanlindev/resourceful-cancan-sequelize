@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import {expect} from 'chai';
 
 import * as cancan2 from '../resourceful-cancan-sequelize';
-import {IMockDb} from './utils';
+import {IMockDb, CancanRequest} from './utils';
 import * as utils from './utils';
 
 let {
@@ -16,14 +16,13 @@ let {
 } = utils;
 
 describe('loadAndAuthorizeResource', () => {
-    let req: cancan2.RequestWithCancan<IMockDb, cancan2.IControllerModels>;
+    let req: CancanRequest;
     let res: express.Response;
     let next = function() {};
     let resourceLoader: express.RequestHandler;
 
     beforeEach(() => {
-        req = <cancan2.RequestWithCancan<IMockDb, cancan2.IControllerModels>>
-            httpMocks.createRequest();
+        req = <CancanRequest> httpMocks.createRequest();
         res = httpMocks.createResponse();
         next = () => {};
         resourceLoader = cancan2.loadAndAuthorizeResource('Book');

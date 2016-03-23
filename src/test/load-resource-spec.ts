@@ -6,7 +6,7 @@ import * as cancan from 'cancan';
 import * as _ from 'lodash';
 
 import * as cancan2 from '../resourceful-cancan-sequelize';
-import {IMockDb, Book} from './utils';
+import {IMockDb, CancanRequest, Book} from './utils';
 import * as utils from './utils';
 let {
     user1,
@@ -21,14 +21,13 @@ let {
 } = utils;
 
 describe('loadResource', () => {
-    let req: cancan2.RequestWithCancan<IMockDb, cancan2.IControllerModels>;
+    let req: CancanRequest;
     let res: express.Response;
     let next = function() {};
     let resourceLoader: express.RequestHandler;
 
     beforeEach(() => {
-        req = <cancan2.RequestWithCancan<IMockDb, cancan2.IControllerModels>>
-            httpMocks.createRequest();
+        req = <CancanRequest> httpMocks.createRequest();
         res = httpMocks.createResponse();
     });
 

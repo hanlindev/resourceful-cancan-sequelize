@@ -24,6 +24,12 @@ export interface IMockDb {
     Book: IMockModel<Book>;
 }
 
+export type CancanRequest = cancan2.RequestWithCancan<
+    IMockDb,
+    cancan2.IControllerModels,
+    cancan2.IUserModel
+>;
+
 export let user1 = new User('test user 1', 'test1@example.com');
 export let user2 = new User('test user 2', 'test2@example.com');
 export let book1 = new Book(1, 'test book 1', 'test user 1');

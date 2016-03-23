@@ -13,6 +13,12 @@ declare module 'resourceful-cancan-sequelize' {
         }
 
         /**
+         * Make your UserInstance interface extend this to add type definintion
+         * to req.user
+         */
+        export interface IUserModel {}
+
+        /**
         * Extend this interface in a controller module to include all model classes
         * that may be loaded by any action of that controller.
         */
