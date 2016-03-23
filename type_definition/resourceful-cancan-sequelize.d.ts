@@ -51,7 +51,7 @@ declare module 'resourceful-cancan-sequelize' {
         function resourcefulCancan<TDb, TUser>(
             db: TDb,
             abilities: AbilitySpecs<TUser>[],
-            config: ResourcefulCancanOptions
+            config?: ResourcefulCancanOptions
         ): express.RequestHandler;
 
         interface ResourceLoaderConfig {
@@ -77,7 +77,7 @@ declare module 'resourceful-cancan-sequelize' {
          */
         export function loadResource(
             name: string,
-            config: ResourceLoaderConfig
+            config?: ResourceLoaderConfig
         ): express.RequestHandler;
 
         /**
@@ -92,7 +92,7 @@ declare module 'resourceful-cancan-sequelize' {
          */
         export function loadAndAuthorizeResource(
             name: string,
-            config: ResourceLoaderConfig
+            config?: ResourceLoaderConfig
         ): express.RequestHandler;
     }
 
