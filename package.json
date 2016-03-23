@@ -4,7 +4,8 @@
   "description": "A cancan extension to be used with Express and Sequelize",
   "main": "lib/resourceful-cancan-sequelize.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "prepublish": "tsc"
   },
   "repository": {
     "type": "git",

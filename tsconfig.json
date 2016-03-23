@@ -10,7 +10,8 @@
         "./src/**/*.ts",
         "./typings/main.d.ts",
         "./type_definition/cancan.d.ts",
-        "./type_definition/node-mocks-http.d.ts"
+        "./type_definition/node-mocks-http.d.ts",
+        "./type_definition/resourceful-cancan-sequelize.d.ts"
     ],
     "compileOnSave": true,
     "atom": {
@@ -24,6 +25,7 @@
         "./src/test/utils.ts",
         "./typings/main.d.ts",
         "./type_definition/cancan.d.ts",
-        "./type_definition/node-mocks-http.d.ts"
+        "./type_definition/node-mocks-http.d.ts",
+        "./type_definition/resourceful-cancan-sequelize.d.ts"
     ]
 }
