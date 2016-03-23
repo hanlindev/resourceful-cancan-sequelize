@@ -82,23 +82,23 @@ export const defaultLoaderConfig: ResourceLoaderConfig = {
     pageNumberName: 'page'
 };
 
-type ResourceLoader = express.RequestHandler;
-
 /**
  * Create a RequestHandler to extract the desired model object(s). If an ID is
- * found in the params or query, a specific model will be loaded. If not found
- * will return a 404 response. POST and UPDATE requests are special. The loader
- * will check if body exists in the request object. If it is, it will try to
- * find a JSON object keyed by the name in the resource loader config and
- * unmarshal it to a Sequelize Model object without saving.
+ * in the params or query, a specific model will be loaded. If not found, it
+ * will return a 404 response. If id is not in params or query, it will return a
+ * collection of model instances that belong to the current user. POST and
+ * UPDATE requests are special. The loader will check if body exists in the
+ * request object. If it is, it will try to find a JSON object keyed by the name
+ * in the resource loader config and unmarshal it to a Sequelize Model object
+ * without saving.
  *
  * @param  {ResourceLoaderConfig} config for the resource loader.
- * @return {ResourceLoader}              a RequestHandler function.
+ * @return {express.RequestHandler}              a RequestHandler function.
  */
 export function loadResource(
     name: string,
     config: ResourceLoaderConfig = defaultLoaderConfig
-): ResourceLoader {
+): express.RequestHandler {
     return (
         req: RequestWithCancan<IDb, IControllerModels>,
         res: express.Response,
@@ -192,6 +192,16 @@ function loadFromDb(
     }
 }
 
+/**
+ * Load and authorize the resource. Resource loading strategy is the same as the
+ * loadResource function. After the resource is loaded, it will try to authorize
+ * it. If authorization succeeds, the next handler will be invoked otherwise
+ * it will return 401 unauthorized response or redirect to the given url.
+ *
+ * @param  {string}               name    name of the resource to be loaded.
+ * @param  {ResourceLoaderConfig} config
+ * @return {express.RequestHandler}       the resource loader middleware.
+ */
 export function loadAndAuthorizeResource(
     name: string,
     config: ResourceLoaderConfig = defaultLoaderConfig
@@ -202,7 +212,9 @@ export function loadAndAuthorizeResource(
         next: express.NextFunction
     ) => {
         loadResourceImpl(name, config, req, res, () => {
-            if (req.can(req.user, getAction(req), req.models[name])) {
+            if (_.isArray(req.models[name])) {
+                next();
+            } else if (req.can(req.user, getAction(req), req.models[name])) {
                 next();
             } else {
                 if (!!req.cancanConfig.unauthorizedRedirect) {
