@@ -19,12 +19,19 @@ export interface CancanHelper<TReturn> {
 export interface IControllerModels {}
 
 /**
+ * Make your UserInstance interface extend this to add type definintion
+ * to req.user
+ */
+export interface IUserModel {}
+
+/**
  * Extend this interface to specify the models in a sequelize db instance.
  */
 export interface IDb {}
 
-export interface RequestWithCancan<TDb, TControllerModels>
+export interface RequestWithCancan<TDb, TControllerModels, TUserModel>
     extends express.Request {
+    user: TUserModel;
     db: TDb,
     cancanConfig: ResourcefulCancanOptions,
     models: TControllerModels,
@@ -32,6 +39,8 @@ export interface RequestWithCancan<TDb, TControllerModels>
     cannot: CancanHelper<boolean>;
     authorize: CancanHelper<void>;
 }
+type BaseRequestWithCancan<TDb> =
+    RequestWithCancan<TDb, IControllerModels, IUserModel>;
 
 export interface ResourcefulCancanOptions {
     userPrimaryKey?: string; // Default user primary key = 'id'
@@ -54,7 +63,7 @@ export function resourcefulCancan<TDb, TUser>(
     config: ResourcefulCancanOptions = {}
 ): express.RequestHandler {
     return (
-        req: RequestWithCancan<TDb, IControllerModels>,
+        req: BaseRequestWithCancan<TDb>,
         res: express.Response,
         next: express.NextFunction
     ) => {
@@ -100,7 +109,7 @@ export function loadResource(
     config: ResourceLoaderConfig = defaultLoaderConfig
 ): express.RequestHandler {
     return (
-        req: RequestWithCancan<IDb, IControllerModels>,
+        req: BaseRequestWithCancan<IDb>,
         res: express.Response,
         next: express.NextFunction
     ) => {
@@ -111,7 +120,7 @@ export function loadResource(
 function loadResourceImpl(
     name: string,
     config: ResourceLoaderConfig,
-    req: RequestWithCancan<IDb, IControllerModels>,
+    req: BaseRequestWithCancan<IDb>,
     res: express.Response,
     next: express.NextFunction
 ) {
@@ -124,7 +133,7 @@ function loadResourceImpl(
 }
 
 function unmarshalModel(
-    req: RequestWithCancan<IDb, IControllerModels>,
+    req: BaseRequestWithCancan<IDb>,
     res: express.Response,
     next: express.NextFunction,
     name: string
@@ -150,7 +159,7 @@ function unmarshalModel(
 
 function loadFromDb(
     name: string,
-    req: RequestWithCancan<IDb, IControllerModels>,
+    req: RequestWithCancan<IDb, IControllerModels, IUserModel>,
     res: express.Response,
     next: express.NextFunction,
     config: ResourceLoaderConfig
@@ -207,7 +216,7 @@ export function loadAndAuthorizeResource(
     config: ResourceLoaderConfig = defaultLoaderConfig
 ): express.RequestHandler {
     return (
-        req: RequestWithCancan<IDb, IControllerModels>,
+        req: RequestWithCancan<IDb, IControllerModels, IUserModel>,
         res: express.Response,
         next: express.NextFunction
     ) => {

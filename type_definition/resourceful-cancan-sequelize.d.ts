@@ -23,11 +23,12 @@ declare module 'resourceful-cancan-sequelize' {
         */
         interface IDb {}
 
-        interface RequestWithCancan<TDb, TControllerModels>
+        interface RequestWithCancan<TDb, TControllerModels, TUserModel>
         extends express.Request {
-            db: TDb,
-            cancanConfig: ResourcefulCancanOptions,
-            models: TControllerModels,
+            db: TDb;
+            user: TUserModel;
+            cancanConfig: ResourcefulCancanOptions;
+            models: TControllerModels;
             can: CancanHelper<boolean>;
             cannot: CancanHelper<boolean>;
             authorize: CancanHelper<void>;
