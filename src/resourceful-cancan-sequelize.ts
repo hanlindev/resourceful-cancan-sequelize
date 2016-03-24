@@ -76,6 +76,7 @@ export function resourcefulCancan<TDb, TUser>(
         req.can = cancan.can;
         req.cannot = cancan.cannot;
         req.authorize = cancan.authorize;
+        next();
     }
 }
 
