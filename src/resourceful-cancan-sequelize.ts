@@ -141,7 +141,7 @@ function unmarshalModel(
 ) {
     let model = req.body[name];
     if (!model) {
-        res.status(400).send('Model data not found in request body.');
+        res.status(400).send(`Model data - ${name} not found in request body.`);
         return;
     }
 
@@ -149,7 +149,8 @@ function unmarshalModel(
         try {
             model = JSON.parse(model);
         } catch (e) {
-            res.status(400).send('Unable to parse model string as JSON string');
+            res.status(400)
+              .send(`Unable to parse model string as JSON string for ${name}`);
             return;
         }
     }
