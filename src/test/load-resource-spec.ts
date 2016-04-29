@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as httpMocks from 'node-mocks-http';
 import * as sinon from 'sinon';
 import {expect} from 'chai';
-import * as cancan from 'cancan';
+import * as cancan from '@hanlindev/cancan';
 import * as _ from 'lodash';
 
 import * as cancan2 from '../resourceful-cancan-sequelize';

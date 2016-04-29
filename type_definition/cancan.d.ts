@@ -13,6 +13,9 @@ declare namespace __cancan {
     interface ConstructorFunction<TModel> {
         new (...args: any[]): TModel;
     }
+    interface ConstructorHelper<TModel> {
+      (...args: any[]): TModel;
+    }
     interface AbilitySpecs<TUserModel> {
         entity: ConstructorFunction<TUserModel>;
         config: ConfigFunction<TUserModel>;
@@ -23,7 +26,7 @@ declare namespace __cancan {
      * @param  {Function} config  function that defines rules
      */
     function configure<TUserModel>(
-        entity: ConstructorFunction<TUserModel>,
+        entity: ConstructorFunction<TUserModel>|ConstructorHelper<TUserModel>,
         config: ConfigFunction<TUserModel>
     );
 
@@ -141,6 +144,6 @@ declare namespace __cancan {
     function matches (obj: any, props: any): boolean;
 }
 
-declare module 'cancan' {
+declare module '@hanlindev/cancan' {
     export = __cancan;
 }

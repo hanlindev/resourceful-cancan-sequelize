@@ -1,10 +1,10 @@
 import * as express from 'express';
 import * as Sequelize from 'sequelize';
-import * as cancan from 'cancan';
+import * as cancan from '@hanlindev/cancan';
 import * as _ from 'lodash';
 
 export interface AbilitySpecs<TUserModel> {
-  entity: cancan.ConstructorFunction<TUserModel>;
+  entity: cancan.ConstructorFunction<TUserModel>|cancan.ConstructorHelper<TUserModel>;
   config: cancan.ConfigFunction<TUserModel>;
 }
 
