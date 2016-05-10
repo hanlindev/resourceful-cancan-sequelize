@@ -1,6 +1,6 @@
 {
   "name": "resourceful-cancan-sequelize",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A cancan extension to be used with Express and Sequelize",
   "main": "lib/resourceful-cancan-sequelize.js",
   "scripts": {
@@ -35,6 +35,7 @@
     "@hanlindev/cancan": "^3.2.0",
     "express": "^4.13.4",
     "lodash": "^4.6.1",
+    "resourceful-router": "^1.4.2",
     "sequelize": "^3.19.3"
   }
 }

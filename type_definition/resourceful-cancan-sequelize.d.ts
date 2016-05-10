@@ -1,6 +1,7 @@
 declare module 'resourceful-cancan-sequelize' {
   import cancan = require('@hanlindev/cancan');
   import express = require('express')
+  import {IConditionalFilterCreator} from 'resourceful-router';
 
   module __resourcefulCancanSequelizeModule {
     interface AbilitySpecs<TUserModel> {
@@ -85,7 +86,7 @@ declare module 'resourceful-cancan-sequelize' {
     export function loadResource(
       name: string,
       config?: ResourceLoaderConfig
-    ): express.RequestHandler;
+    ): IConditionalFilterCreator;
 
     /**
     * Load and authorize the resource. Resource loading strategy is the same as the
@@ -100,7 +101,7 @@ declare module 'resourceful-cancan-sequelize' {
     export function loadAndAuthorizeResource(
       name: string,
       config?: ResourceLoaderConfig
-    ): express.RequestHandler;
+    ): IConditionalFilterCreator;
   }
 
   export = __resourcefulCancanSequelizeModule;

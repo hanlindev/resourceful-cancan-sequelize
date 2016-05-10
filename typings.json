@@ -11,6 +11,8 @@
     "mime": "registry:dt/mime#0.0.0+20160316155526",
     "mocha": "registry:dt/mocha#2.2.5+20160317120654",
     "node": "registry:dt/node#4.0.0+20160317120654",
+    "resource-collection": "github:hanlindev/resource-collection/type-definition/resource-collection.d.ts",
+    "resourceful-router": "npm:resourceful-router/type-definition/resourceful-router.d.ts",
     "sequelize": "registry:dt/sequelize#3.4.1+20160317120654",
     "serve-static": "registry:dt/serve-static#0.0.0+20160317120654",
     "sinon": "registry:dt/sinon#1.16.0+20160317120654",

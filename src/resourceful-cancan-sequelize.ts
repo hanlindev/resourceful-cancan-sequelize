@@ -1,5 +1,6 @@
 import * as express from 'express';
 import * as Sequelize from 'sequelize';
+import {conditionalFilter, IConditionalFilterCreator} from 'resourceful-router';
 import * as cancan from '@hanlindev/cancan';
 import * as _ from 'lodash';
 
@@ -108,14 +109,14 @@ export const defaultLoaderConfig: ResourceLoaderConfig = {
 export function loadResource(
   name: string,
   config: ResourceLoaderConfig = defaultLoaderConfig
-): express.RequestHandler {
-  return (
+): IConditionalFilterCreator {
+  return conditionalFilter((
     req: BaseRequestWithCancan<IDb>,
     res: express.Response,
     next: express.NextFunction
   ) => {
     loadResourceImpl(name, config, req, res, next);
-  }
+  });
 }
 
 function loadResourceImpl(
@@ -218,8 +219,8 @@ function loadFromDb(
 export function loadAndAuthorizeResource(
   name: string,
   config: ResourceLoaderConfig = defaultLoaderConfig
-): express.RequestHandler {
-  return (
+): IConditionalFilterCreator {
+  return conditionalFilter((
     req: RequestWithCancan<IDb, IControllerModels, IUserModel>,
     res: express.Response,
     next: express.NextFunction
@@ -238,7 +239,7 @@ export function loadAndAuthorizeResource(
         }
       }
     });
-  };
+  });
 }
 
 function getAction(req: express.Request): string {
