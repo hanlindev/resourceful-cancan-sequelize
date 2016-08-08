@@ -270,7 +270,7 @@ function getAction(req: express.Request): string {
     case 'PUT':
     action = 'edit';
     break;
-    case 'DESTROY':
+    case 'DELETE':
     action = 'destroy';
     break;
     default:
