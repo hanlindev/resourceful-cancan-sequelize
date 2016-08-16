@@ -156,8 +156,23 @@ function unmarshalModel(
     }
   }
 
-  req.models[name] = req.db[name].build(model);
-  next();
+  if (req.method === 'POST') {
+    req.models[name] = req.db[name].build(model);
+    next();
+  } else if (req.method === 'PUT') {
+    const id = model.id;
+    req.db[name].findById(id).then((existing: Sequelize.Instance<any>) => {
+      if (!existing) {
+        res.status(404).send(`Model with id ${id} not found`);
+        return null;
+      } else {
+        existing.set(model);
+        req.models[name] = existing;
+        next();
+        return null;
+      }
+    });
+  }
 }
 
 function loadFromDb(
@@ -255,7 +270,7 @@ function getAction(req: express.Request): string {
     case 'PUT':
     action = 'edit';
     break;
-    case 'DESTROY':
+    case 'DELETE':
     action = 'destroy';
     break;
     default:
