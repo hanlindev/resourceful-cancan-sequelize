@@ -1,6 +1,6 @@
 {
   "name": "resourceful-cancan-sequelize",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "A cancan extension to be used with Express and Sequelize",
   "main": "lib/resourceful-cancan-sequelize.js",
   "types": "lib/resourceful-cancan-sequelize.d.ts",

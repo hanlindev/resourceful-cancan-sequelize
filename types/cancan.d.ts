@@ -19,11 +19,12 @@ declare module 'cancan' {
     interface ConditionFunction<TPerformer, TTarget> {
       (performer: TPerformer, target: TTarget): boolean;
     }
+    type Class<T> = ClassConstructor<T> | InstanceCreator<T>;
 
-    type ModelType<TP> = ClassConstructor<TP> | InstanceCreator<TP>;
+    type ModelType<TP> = Class<TP>;
     type ActionsType = Array<string> | string;
     type TargetsType<TT> = 
-      Array<ClassConstructor<any>> | ClassConstructor<TT> | 'all';
+      Array<Class<any>> | Class<TT> | 'all';
     /**
      * Optional callback to apply additional checks on both target and
      * action performers.
