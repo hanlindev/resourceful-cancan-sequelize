@@ -1,6 +1,6 @@
 {
   "name": "resourceful-cancan-sequelize",
-  "version": "1.4.4",
+  "version": "2.0.1",
   "description": "A cancan extension to be used with Express and Sequelize",
   "main": "lib/resourceful-cancan-sequelize.js",
   "types": "lib/resourceful-cancan-sequelize.d.ts",
@@ -17,6 +17,10 @@
     "authorization",
     "Express",
     "Sequelize"
+  ],
+  "files": [
+    "lib/resourceful-cancan-sequelize.d.ts",
+    "lib/resourceful-cancan-sequelize.js"
   ],
   "author": "Lin Han <hanlin.dev@gmail.com>",
   "license": "MIT",
