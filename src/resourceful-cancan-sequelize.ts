@@ -1,12 +1,20 @@
 import * as express from 'express';
 import * as Sequelize from 'sequelize';
 import {conditionalFilter, IConditionalFilterCreator} from 'resourceful-router';
-import * as cancan from '@hanlindev/cancan';
+import * as Cancan from 'cancan';
+import {ClassConstructor, InstanceCreator, ModelType, ActionsType, TargetsType, ConditionType, CancanOptions} from 'cancan';
 import * as _ from 'lodash';
 
+export interface AbilityConfig<TP, TT> {
+  model: ModelType<TP>;
+  actions: ActionsType;
+  targets: TargetsType<TT>;
+  condition?: ConditionType<TP, TT>;
+}
+
 export interface AbilitySpecs<TUserModel> {
-  entity: cancan.ConstructorFunction<TUserModel>|cancan.ConstructorHelper<TUserModel>;
-  config: cancan.ConfigFunction<TUserModel>;
+  entity: ClassConstructor<TUserModel> | InstanceCreator<TUserModel>;
+  configure: (cancan: Cancan) => any;
 }
 
 export interface CancanHelper<TReturn> {
@@ -68,8 +76,9 @@ export function resourcefulCancan<TDb, TUser>(
     res: express.Response,
     next: express.NextFunction
   ) => {
+    const cancan = new Cancan();
     abilities.forEach(ability => {
-      cancan.configure(ability.entity, ability.config);
+      ability.configure(cancan);
     });
 
     req.db = db;

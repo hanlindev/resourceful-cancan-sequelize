@@ -22,7 +22,7 @@ describe('loadAndAuthorizeResource', () => {
     let resourceLoader: express.RequestHandler;
 
     beforeEach(() => {
-        req = <CancanRequest> httpMocks.createRequest();
+        req = (httpMocks.createRequest() as any) as CancanRequest;
         res = httpMocks.createResponse();
         next = () => {};
         resourceLoader = cancan2.loadAndAuthorizeResource('Book');

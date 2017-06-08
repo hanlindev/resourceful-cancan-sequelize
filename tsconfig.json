@@ -1,31 +1,15 @@
 {
-    "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs",
-        "noImplicitAny": false,
-        "moduleResolution": "node",
-        "outDir": "lib"
-    },
-    "filesGlob": [
-        "./src/**/*.ts",
-        "./typings/index.d.ts",
-        "./type_definition/cancan.d.ts",
-        "./type_definition/node-mocks-http.d.ts",
-        "./type_definition/resourceful-cancan-sequelize.d.ts"
-    ],
-    "compileOnSave": true,
-    "atom": {
-        "rewriteTsconfig": true
-    },
-    "files": [
-        "./src/resourceful-cancan-sequelize.ts",
-        "./src/test/load-and-authorize-resource-spec.ts",
-        "./src/test/load-resource-spec.ts",
-        "./src/test/resourceful-cancan-spec.ts",
-        "./src/test/utils.ts",
-        "./typings/index.d.ts",
-        "./type_definition/cancan.d.ts",
-        "./type_definition/node-mocks-http.d.ts",
-        "./type_definition/resourceful-cancan-sequelize.d.ts"
-    ]
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "outDir": "lib",
+    "declaration": true
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./types/*.d.ts"
+  ],
+  "compileOnSave": true
 }

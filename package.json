@@ -3,6 +3,7 @@
   "version": "1.4.4",
   "description": "A cancan extension to be used with Express and Sequelize",
   "main": "lib/resourceful-cancan-sequelize.js",
+  "types": "lib/resourceful-cancan-sequelize.d.ts",
   "scripts": {
     "test": "mocha",
     "prepublish": "tsc"
@@ -24,15 +25,21 @@
   },
   "homepage": "https://github.com/hanlindev/resourceful-cancan-sequelize#readme",
   "devDependencies": {
+    "@types/chai": "^4.0.0",
+    "@types/mocha": "^2.2.41",
+    "@types/sinon": "^2.3.1",
     "chai": "^3.5.0",
     "mocha": "^2.4.5",
     "node-mocks-http": "^1.5.2",
     "sinon": "^1.17.3",
     "ts-node": "^0.6.2",
-    "typescript": "^1.8.7"
+    "typescript": "^2.3.4"
   },
   "dependencies": {
-    "@hanlindev/cancan": "^3.4.0",
+    "@types/express": "^4.0.35",
+    "@types/lodash": "^4.14.65",
+    "@types/sequelize": "^4.0.59",
+    "cancan": "^3.0.0",
     "express": "^4.13.4",
     "lodash": "^4.6.1",
     "resourceful-router": "^1.4.2",

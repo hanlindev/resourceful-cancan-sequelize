@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as httpMocks from 'node-mocks-http';
 import {expect} from 'chai';
-import * as cancan from '@hanlindev/cancan';
+import * as Cancan from 'cancan';
 import * as _ from 'lodash';
 
 import * as cancan2 from '../resourceful-cancan-sequelize';
@@ -23,7 +23,7 @@ describe('resourcefulCancan', () => {
     let next = function() {};
 
     beforeEach(() => {
-        req = <CancanRequest> httpMocks.createRequest();
+        req = (httpMocks.createRequest() as any) as CancanRequest;
         res = httpMocks.createResponse();
         applyResourcefulCancan(req, res, next);
     });

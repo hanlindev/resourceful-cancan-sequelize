@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as httpMocks from 'node-mocks-http';
 import * as sinon from 'sinon';
 import {expect} from 'chai';
-import * as cancan from '@hanlindev/cancan';
+import * as Cancan from 'cancan';
 import * as _ from 'lodash';
 
 import * as cancan2 from '../resourceful-cancan-sequelize';
@@ -27,7 +27,7 @@ describe('loadResource', () => {
     let resourceLoader: express.RequestHandler;
 
     beforeEach(() => {
-        req = <CancanRequest> httpMocks.createRequest();
+        req = (httpMocks.createRequest() as any) as CancanRequest;
         res = httpMocks.createResponse();
     });
 
@@ -73,7 +73,7 @@ describe('loadResource', () => {
         describe('POST/PUT methods', () => {
             it('set model from content in the request body', (done) => {
                 req.method = 'POST';
-                req.body['Book'] = _.clone<Book>(book1, true);
+                req.body['Book'] = _.cloneDeep<Book>(book1);
                 resourceLoader(req, res, () => {
                     expect(req.models['Book']).to.deep.equal(book1);
                     done();
