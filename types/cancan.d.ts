@@ -32,7 +32,7 @@ declare module 'cancan' {
      * attributes have the same value as those specified in this object. The
      * comparison is done by '==='.
      */
-    type ConditionType<TP, TT> = Pick<TP, keyof TP> | ConditionFunction<TP, TT>;
+    type ConditionType<TP, TT> = Pick<TT, keyof TT> | ConditionFunction<TP, TT>;
   }
 
   class Cancan {
