@@ -20,7 +20,7 @@ declare module 'cancan' {
       (performer: TPerformer, target: TTarget): boolean;
     }
 
-    type ModelType<TP> = ClassConstructor<TP>;
+    type ModelType<TP> = ClassConstructor<TP> | InstanceCreator<TP>;
     type ActionsType = Array<string> | string;
     type TargetsType<TT> = 
       Array<ClassConstructor<any>> | ClassConstructor<TT> | 'all';
@@ -32,7 +32,7 @@ declare module 'cancan' {
      * attributes have the same value as those specified in this object. The
      * comparison is done by '==='.
      */
-    type ConditionType<TP, TT> = Object | ConditionFunction<TP, TT>;
+    type ConditionType<TP, TT> = Pick<TP, keyof TP> | ConditionFunction<TP, TT>;
   }
 
   class Cancan {
