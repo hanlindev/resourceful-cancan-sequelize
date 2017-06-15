@@ -231,15 +231,21 @@ function loadFromDb(
 }
 
 /**
-* Load and authorize the resource. Resource loading strategy is the same as the
-* loadResource function. After the resource is loaded, it will try to authorize
-* it. If authorization succeeds, the next handler will be invoked otherwise
-* it will return 401 unauthorized response or redirect to the given url.
-*
-* @param  {string}               name    name of the resource to be loaded.
-* @param  {ResourceLoaderConfig} config
-* @return {express.RequestHandler}       the resource loader middleware.
-*/
+ * Load and authorize the resource. Resource loading strategy is the same as the
+ * loadResource function. After the resource is loaded, it will try to authorize
+ * it. If authorization succeeds, the next handler will be invoked otherwise
+ * it will return 401 unauthorized response or redirect to the given url.
+ *
+ * HTTP -> cancan action mapping:
+ * GET    -> view
+ * POST   -> add
+ * PUT    -> edit
+ * DELETE -> destroy
+ *
+ * @param  {string}               name    name of the resource to be loaded.
+ * @param  {ResourceLoaderConfig} config
+ * @return {express.RequestHandler}       the resource loader middleware.
+ */
 export function loadAndAuthorizeResource(
   name: string,
   config: ResourceLoaderConfig = defaultLoaderConfig
@@ -271,19 +277,19 @@ function getAction(req: express.Request): string {
 
   switch(req.method) {
     case 'GET':
-    action = 'view';
-    break;
+      action = 'view';
+      break;
     case 'POST':
-    action = 'add';
-    break;
+      action = 'add';
+      break;
     case 'PUT':
-    action = 'edit';
-    break;
+      action = 'edit';
+      break;
     case 'DELETE':
-    action = 'destroy';
-    break;
+      action = 'destroy';
+      break;
     default:
-    throw new TypeError('Unknown HTTP method');
+      throw new TypeError('Unknown HTTP method');
   }
 
   return action;
